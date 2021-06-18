@@ -6,6 +6,5 @@ Examples should be executed in following order:
 - [create_did.js](create_did.js)
 - [manipulate_did.js](manipulate_did.js)
 - [create_vc.js](create_vc.js)
-- [revocation.js](revocation.js)
 
 All other files are helper functions.
