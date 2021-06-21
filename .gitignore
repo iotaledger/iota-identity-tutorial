@@ -7,5 +7,5 @@ signedCredentials/*
 weakhold/*
 
 # exception to the rule
-!signedCredentials/.gitkeep
-!weakhold/.gitkeep 
+!signedCredentials/README.md
+!weakhold/README.md 
