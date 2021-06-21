@@ -1,5 +1,9 @@
 # Folders
 node_modules/
+signedCredentials/
+weakhold/
 
 # Files
+test.js
 revocation.js
+Degree_unsigned.pdf
