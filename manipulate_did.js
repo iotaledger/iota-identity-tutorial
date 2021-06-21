@@ -2,12 +2,12 @@
 // Copyright 2020-2021 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-const { KeyPair, KeyType, publish, VerificationMethod, Service, Document } = require("@iota/identity-wasm/node");
+const { DID, Client, Config, KeyPair, KeyType, VerificationMethod, Service, Document } = require("@iota/identity-wasm/node");
 const { resolution } = require('./resolution');
 const { CLIENT_CONFIG } = require('./config');
-const { logExplorerUrl } = require('./explorer_util');
-const { getRecentMessageId } = require('./getRecentMessageId');
-const { logDid } = require('./logDid');
+const { storeWeakholdObject } = require('./storeWeakholdObject');
+const { getWeakholdObject } = require('./getWeakholdObject');
+
 
 /*
     This example shows how to add more to an existing DID Document.
@@ -17,35 +17,32 @@ const { logDid } = require('./logDid');
     An important detail to note is the previousMessageId. This is an important field as it links the new DID Document to the old DID Document, creating a chain.
     Without setting this value, the new DID Document won't get used during resolution of the DID!
 */
-async function manipulateIdentity(holder, did, authKey) {
+async function manipulateIdentity(clientConfig, issuerSubject, issuerDid, issuerAuthKey) {
+    // Create a default client configuration from the parent config network.
+    const config = Config.fromNetwork(clientConfig.network);
+
+    // Create a client instance to publish messages to the Tangle.
+    const client = Client.fromConfig(config);
+
     //Resolve existing DID document object and corresponding messageId
-    let resolvedDid = await resolution(CLIENT_CONFIG, did);
-    let messageId = await getRecentMessageId(did)
-    
-    //Set Did Document field "updated" to current timestamp
-    resolvedDid.updated = new Date();
+    let resolvedDid = await resolution(CLIENT_CONFIG, issuerDid);
+    //console.log(resolvedDid.document.verificationMethod);
+    let messageId = resolvedDid.messageId
+
+    //Set Did Document field "updated" to current timestamp as ISO 8601 string without milliseconds
+    resolvedDid.document.updated = (new Date()).toISOString().split('.')[0]+"Z";
 
     //Create DID document instance
-    let doc = Document.fromJSON(resolvedDid);
+    let doc = Document.fromJSON(resolvedDid.document);
 
-    //Log results of resolved existing did
-    logExplorerUrl("Existing Identity:", CLIENT_CONFIG.network.toString(), messageId);
-    
-    //Log Did information of resolved existing did
-    logDid(holder, doc, messageId, authKey, null);
-
-    //Add a new VerificationMethod with a new KeyPair
+    //Create new key pair and new verification method
     const newKey = new KeyPair(KeyType.Ed25519);
-    const method = VerificationMethod.fromDID(doc.id, newKey, "newKey");
-    doc.insertMethod(method, "VerificationMethod");
+    const methodName = "aliceDegreeVerification";
+    const method = VerificationMethod.fromDID(doc.id, newKey, methodName);
 
-    //Add a new ServiceEndpoint
-    const serviceJSON = {
-        "id":doc.id+"#linked-domain",
-        "type": "LinkedDomains",
-        "serviceEndpoint" : "https://iota.org"
-    };
-    doc.insertService(Service.fromJSON(serviceJSON));
+    //Remove method first if exists and create new method with newly created key pair
+    doc.removeMethod(DID.parse(doc.id.toString()+"#"+methodName));
+    doc.insertMethod(method, "VerificationMethod");
 
     //Add the messageId of the previous message in the chain.
     //This is REQUIRED in order for the messages to form a chain.
@@ -54,24 +51,20 @@ async function manipulateIdentity(holder, did, authKey) {
     doc.previousMessageId = messageId;
 
     //Sign the DID Document with the appropriate key
-    doc.sign(authKey);
+    doc.sign(issuerAuthKey);
+    console.log(doc);
 
     //Publish the Identity to the IOTA Network, this may take a few seconds to complete Proof-of-Work.
-    const nextMessageId = await publish(doc.toJSON(), CLIENT_CONFIG);
+    const nextMessageId = await client.publishDocument(doc.toJSON());
 
-    //Log results of updated did
-    logExplorerUrl("Updated Identity:", CLIENT_CONFIG.network.toString(), nextMessageId);
-    
-    //Log Did information of updated did
-    logDid(holder, doc, nextMessageId, authKey, newKey);
+    //Store new DID keys to weakhold
+    storeWeakholdObject(issuerSubject, doc, nextMessageId, issuerAuthKey, newKey);
 
-    return {key, newKey, doc, nextMessageId};
+    return {issuerAuthKey, newKey, doc, nextMessageId};
 }
 
 exports.manipulateIdentity = manipulateIdentity;
 
-let holder = 'University of Oslo'
-let did = 'did:iota:HaAxn94whEtc6EkoTvtbTLarNS2a5YBAhiy77sGL9r6d';
-let key = KeyPair.fromBase58(1, '6dFr6WF1NvbAyGU7Hz8MYAbnVJvuRmxw3U7C4g7KrNoj', '6QUCgFBjU6rATT59FMhyzUc6PBMNQf56k3EGY9fn4ag9');
-
-manipulateIdentity(holder, did, key);
+//Manipulate identity from weakhold object
+let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
+manipulateIdentity(CLIENT_CONFIG, issuer.subject, issuer.did, KeyPair.fromJSON(issuer.authKey));

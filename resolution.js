@@ -1,7 +1,7 @@
 // Copyright 2020-2021 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-const { resolve } = require('@iota/identity-wasm/node');
+const { Client, Config } = require('@iota/identity-wasm/node');
 const { CLIENT_CONFIG } = require('./config');
 
 /*
@@ -9,13 +9,18 @@ const { CLIENT_CONFIG } = require('./config');
     @param {{network: string, node: string}} clientConfig
 */
 async function resolution(clientConfig, did) {
+    // Create a default client configuration from the parent config network.
+    const config = Config.fromNetwork(clientConfig.network);
+
+    // Create a client instance to publish messages to the Tangle.
+    const client = Client.fromConfig(config);
+
     // Resolve a DID.
-    resolvedDid = await resolve(did, clientConfig);
-    //console.log(resolvedDid);
+    resolvedDid = await client.resolve(did);
     
     return resolvedDid;
 }
 
 exports.resolution = resolution;
 
-//resolution(CLIENT_CONFIG, 'did:iota:HaAxn94whEtc6EkoTvtbTLarNS2a5YBAhiy77sGL9r6d').then(console.log);
+//resolution(CLIENT_CONFIG, 'did:iota:BdMGL34HFicGNep4Q3NLv2FE75ZsFMmExJn9bh4rcJap').then(console.log);

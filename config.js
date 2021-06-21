@@ -1,9 +1,15 @@
+// Copyright 2020-2021 IOTA Stiftung
+// SPDX-License-Identifier: Apache-2.0
+
+const { Network, defaultNodeURL, explorerURL } = require('@iota/identity-wasm/node');
+
+const MAINNET = Network.mainnet();
+
+/* @type {{network: Network, defaultNodeURL: string, explorerURL: string}} */
 const CLIENT_CONFIG = {
-    network: "main",
-    node: "https://chrysalis-nodes.iota.org:443",
+    network: MAINNET,
+    defaultNodeURL: MAINNET.defaultNodeURL,
+    explorerURL: MAINNET.explorerURL,
 }
 
-const EXPLORER_URL = "https://explorer.iota.org/mainnet/transaction";
-
 exports.CLIENT_CONFIG = CLIENT_CONFIG;
-exports.EXPLORER_URL = EXPLORER_URL;

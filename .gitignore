@@ -1,7 +1,7 @@
 # Folders
 node_modules/
-signedCredentials/
-weakhold/
+signedCredentials/*
+weakhold/*
 
 # Files
 test.js
