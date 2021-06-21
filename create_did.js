@@ -3,8 +3,8 @@
 
 const { Document, KeyType, publish } = require("@iota/identity-wasm/node");
 const { CLIENT_CONFIG } = require('./config');
-const { logExplorerUrl } = require('./explorer_util');
-const { logDid } = require('./logDid');
+const { getExplorerUrl } = require('./getExplorerUrl');
+const { storeToWeakhold } = require('./storeToWeakhold');
 
 /*
     This example shows a basic introduction on how to create a basic DID Document and upload it to the Tangle.
@@ -22,11 +22,11 @@ async function createIdentity(holder) {
     //Publish the Identity to the IOTA Network, this may take a few seconds to complete Proof-of-Work.
     const messageId = await publish(doc.toJSON(), CLIENT_CONFIG);
 
-    //Log the results
-    logExplorerUrl("Identity Creation:", CLIENT_CONFIG.network.toString(), messageId);
+    //Get explorer url
+    let explorerUrl = getExplorerUrl(CLIENT_CONFIG.network.toString(), messageId)
 
-    //Log Did information
-    logDid(holder, doc, messageId, key, null);
+    //Store Did information to Weakhold and log to console
+    storeToWeakhold(holder, doc, messageId, explorerUrl, key, null);
 
     //Return the results
     return {key, doc, messageId};
@@ -35,3 +35,4 @@ async function createIdentity(holder) {
 exports.createIdentity = createIdentity;
 
 createIdentity('Alice');
+createIdentity('University of Oslo');

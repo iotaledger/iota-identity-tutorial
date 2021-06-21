@@ -7,8 +7,8 @@
   @param {!string} network
   @param {!string} messageId
 */
-function logExplorerUrl(preamble, network, messageId) {
-    console.log(`${preamble} https://explorer.iota.org/${network}net/message/${messageId}`);
+function getExplorerUrl(network, messageId) {
+    return(`https://explorer.iota.org/${network}net/message/${messageId}`);
   }
   
-exports.logExplorerUrl = logExplorerUrl;
+exports.getExplorerUrl = getExplorerUrl;
