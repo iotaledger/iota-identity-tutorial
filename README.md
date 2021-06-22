@@ -12,6 +12,33 @@ As described [here](https://www.iota.org/solutions/digital-identity), IOTA Ident
 
 ![banner](./Identity_Tutorial_Chart.png)
 
+#### Key Storage
+- In this tutorial, the key pairs for every newly created or updated DID document will be stored in Weakhold
+    - Ok, ok it's just JSON files in a folder, but it get's the job done
+    - e.g. ./weakhold/Alice.json
+
+:warning: **Needless to say that this is no proper key storage solution and for professional IOTA implementations you should use our key management framework [Stronghold](https://github.com/iotaledger/stronghold.rs).**
+
+Example Weakhold file:
+```json
+{
+    "subject": "Alice",
+    "did": "did:iota:Bakoe4HD4uwekMuyMkeo7mCsA2frXej68M4QyFvEpo2G",
+    "messageId": "7c25309fe97f2cf2d609cf83f31e8838795dd16d235c7a56566970309a0d6dbd",
+    "explorerUrl": "https://explorer.iota.org/mainnet/message/7c25309fe97f2cf2d609cf83f31e8838795dd16d235c7a56566970309a0d6dbd",
+    "authKey": {
+        "type": "ed25519",
+        "public": "ExwZKmF9y2N4mKnEaeUU7bFyCkZ5oVjjK3ojooJKNxUK",
+        "secret": "G83815cmpPadAzs52GmpwS614xpaAWWQxUexmRVNkg75"
+    },
+    "verifKey": {
+        "type": "ed25519",
+        "public": "F9aM5Q9gGXb6Dswe8eSdsz5eDQX2ErTnpGDjFj5LMVvx",
+        "secret": "12S3U2u8ofyju53tmGsG9PKQfkBM8rhzL9BUBhfGqpdm"
+    }
+}
+```
+
 #### Steps
 In this process, you will complete the following steps from the perspective of one of the mentioned roles:
 1. Holder: Create a DID (Decentralized Identifier) document for Alice ([createDid.js](createDid.js))
