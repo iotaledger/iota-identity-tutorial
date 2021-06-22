@@ -59,4 +59,8 @@ exports.removeVerificationMethod = removeVerificationMethod;
 let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
 let verifiactionMethodName = "aliceDegreeVerification";
 
-removeVerificationMethod(issuer.subject, issuer.did, KeyPair.fromJSON(issuer.authKey), verifiactionMethodName);
+removeVerificationMethod(
+    issuer.subject,
+    issuer.did,
+    KeyPair.fromJSON(issuer.authKey),
+    verifiactionMethodName);
