@@ -1,10 +1,10 @@
-### IOTA Identity Tutorial (WASM-Binding)
+## IOTA Identity Tutorial (WASM-Binding)
 
-#### Problem Description
+### Problem Description
 Within the following code examples you will utilize the [WASM binding of the IOTA Identity framework](https://github.com/iotaledger/identity.rs/tree/dev/bindings/wasm/examples) to solve the problem described below:
 > Alice recently graduated from the University of Oslo with a Bachelors of Computer Science. Now she wants to apply for a remote job at the IOTA Foundation and needs to digitally prove the existence and validity of her degree. What she needs is an immutable and verifiable credential, which has been approved by both the University of Oslo and herself, before presenting it to her possible new employer.
 
-#### Roles
+### Roles
 As described [here](https://www.iota.org/solutions/digital-identity), IOTA Identity builds on the W3C's proposed standards for a digital identity framework and thus is based on three roles:
 - Holder (Alice)
 - Issuer (University of Oslo)
@@ -12,7 +12,7 @@ As described [here](https://www.iota.org/solutions/digital-identity), IOTA Ident
 
 ![banner](./Identity_Tutorial_Chart.png)
 
-#### Key Storage
+### Key Storage
 - In this tutorial, the key pairs for every newly created or updated DID document will be stored in Weakhold
     - Ok, ok it's just JSON files in a folder, but it get's the job done
     - e.g. ./weakhold/Alice.json
@@ -39,7 +39,7 @@ Example Weakhold file:
 }
 ```
 
-#### Steps
+### Steps
 In this process, you will complete the following steps from the perspective of one of the mentioned roles:
 1. Holder: Create a DID (Decentralized Identifier) document for Alice
     - [createDid.js](createDid.js)
