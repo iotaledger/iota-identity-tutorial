@@ -11,13 +11,19 @@ As described [here](https://www.iota.org/solutions/digital-identity), IOTA Ident
 In this process, you will complete the following steps from the perspective of one of the mentioned roles:
 1. Holder: Create a DID (Decentralized Identifier) document for Alice
 2. Issuer: Create a DID document for the University of Oslo
-3. Issuer: Add a verification method to the University's DID document with the sole purpose to verify Alice's degree
-4. Issuer: Setup a document representing Alice's degree, containing her DID
-5. Issuer: Sign degree document with the private key of the University's verification method for a verifiable credential
-6. Holder: Sign document with Alice's private authentication key for a verifiable presentation
-7. Verifier: Verify Alice's and the University's signatures with their respective public keys
+3. Issuer: Add a verification method to the University's DID document with the purpose to verify Alice's degree
+4. Holder: Add a verification method to Alice's DID document with the purpose to present her degree to a third party
+5. Holder: Setup a document representing Alice's degree, containing her DID
+6. Issuer: Sign degree document with the private key of the University's verification method for a verifiable credential
+7. Holder: Alice verifies the credentials to make sure it was actually signed by key associated to the University DID
+8. Holder: Alice signs verifiable credential with private key of Alices's verification method for a verifiable presentation
+9. Verifier: Verify Alice's and the University's signatures with their respective public keys
 
 Examples should be executed in following order:
-* [create_did.js](create_did.js)
-* [manipulate_did.js](manipulate_did.js)
-* [create_vc.js](create_vc.js)
+* [createDid.js](createDid.js)
+* [addVerificationMethod.js](addVerificationMethod.js)
+* [createVerifiableCredential.js](createVerifiableCredential.js)
+* [checkVerifiableCredential.js](checkVerifiableCredential.js)
+* [createVerifiablePresentation.js](createVerifiablePresentation.js)
+* [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
+* [removeVerificationMethod.js](removeVerificationMethod.js)

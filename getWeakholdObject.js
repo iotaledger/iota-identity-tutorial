@@ -1,9 +1,9 @@
-const fs = require('fs');
+const { readFileSync } = require('fs');
 
 
 function getWeakholdObject(weakholdFilePath) {
     //Read weakhold object from file
-    let weakholdObject = JSON.parse(fs.readFileSync(weakholdFilePath));
+    let weakholdObject = JSON.parse(readFileSync(weakholdFilePath));
     return(weakholdObject);
 }
 

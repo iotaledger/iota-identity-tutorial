@@ -8,9 +8,9 @@ const { CLIENT_CONFIG } = require('./config');
     A short example to show how to resolve a DID. This returns the latest DID Document.
     @param {{network: string, node: string}} clientConfig
 */
-async function resolution(clientConfig, did) {
+async function resolveDid(did) {
     // Create a default client configuration from the parent config network.
-    const config = Config.fromNetwork(clientConfig.network);
+    const config = Config.fromNetwork(CLIENT_CONFIG.network);
 
     // Create a client instance to publish messages to the Tangle.
     const client = Client.fromConfig(config);
@@ -21,6 +21,6 @@ async function resolution(clientConfig, did) {
     return resolvedDid;
 }
 
-exports.resolution = resolution;
+exports.resolveDid = resolveDid;
 
-//resolution(CLIENT_CONFIG, 'did:iota:BdMGL34HFicGNep4Q3NLv2FE75ZsFMmExJn9bh4rcJap').then(console.log);
+//&resolution('did:iota:3kedhpwvFBdopsqGZgT8aCr5cuDgRkwesjds4mxbVZg8').then(console.log);

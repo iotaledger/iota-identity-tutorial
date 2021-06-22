@@ -1,5 +1,4 @@
-
-const fs = require('fs');
+const { writeFileSync } = require('fs');
 const { getExplorerUrl } = require('./getExplorerUrl');
 const { CLIENT_CONFIG } = require('./config');
 
@@ -27,14 +26,12 @@ function storeWeakholdObject(holder, doc, messageId, authKey, verifKey = null) {
     //Write Did Information to weakhold
     let didPath = `./weakhold/${holder}.json`.replace(/\s/g, '');
     try {
-        fs.writeFileSync(didPath, JSON.stringify(yourDid, null, 4))
-        console.log(`Following information was successfully written to weakhold: ${didPath}`)
+        writeFileSync(didPath, JSON.stringify(yourDid, null, 4))
+        console.log('\n',`The associated keys to proof ownership of ${holder}'s DID were stored/updated to this weakhold file: ${didPath}`)
+        console.log(yourDid);
       } catch (err) {
         console.error(err)
       }
-
-
-    console.log(yourDid);
 }
 
 exports.storeWeakholdObject = storeWeakholdObject;
