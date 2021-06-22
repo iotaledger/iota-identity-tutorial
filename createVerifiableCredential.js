@@ -24,7 +24,7 @@ async function createVerifiableCredential(issuerSubject, issuerDid, issuerVerifK
     const credentialSubject = {
         "id": holderDid,
         "name": holderSubject,
-        "degreeName": "Bachelor of Science and Arts",
+        "degreeName": "Bachelor of Computer Science",
         "degreeType": "BachelorDegree",
         "GPA": "4.0"
     }
