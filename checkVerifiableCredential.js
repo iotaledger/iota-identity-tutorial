@@ -1,3 +1,5 @@
+// Copyright 2020-2021 IOTA Stiftung
+// SPDX-License-Identifier: Apache-2.0
 
 const { VerifiableCredential, Client, Config } = require("@iota/identity-wasm/node");
 const { readFileSync } = require('fs');

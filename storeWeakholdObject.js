@@ -1,3 +1,6 @@
+// Copyright 2020-2021 IOTA Stiftung
+// SPDX-License-Identifier: Apache-2.0
+
 const { writeFileSync } = require('fs');
 const { getExplorerUrl } = require('./getExplorerUrl');
 const { CLIENT_CONFIG } = require('./config');
