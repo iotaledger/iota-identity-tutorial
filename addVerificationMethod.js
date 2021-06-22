@@ -69,9 +69,17 @@ exports.addVerificationMethod = addVerificationMethod;
 //Add verification method to issuer DID
 let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
 let issuerVerificationMethod = "aliceDegreeVerification";
-addVerificationMethod(issuer.subject, issuer.did, KeyPair.fromJSON(issuer.authKey), issuerVerificationMethod);
+addVerificationMethod(
+    issuer.subject,
+    issuer.did,
+    KeyPair.fromJSON(issuer.authKey),
+    issuerVerificationMethod);
 
 //Add verification method to holder DID
 let holder = getWeakholdObject('./weakhold/Alice.json')
 let holderVerificationMethod = "aliceDegreePresentation";
-addVerificationMethod(holder.subject, holder.did, KeyPair.fromJSON(holder.authKey), holderVerificationMethod);
+addVerificationMethod(
+    holder.subject,
+    holder.did,
+    KeyPair.fromJSON(holder.authKey),
+    holderVerificationMethod);

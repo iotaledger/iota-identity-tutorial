@@ -58,7 +58,11 @@ In this process, you will complete the following steps from the perspective of o
     let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
     let issuerVerificationMethod = "aliceDegreeVerification";
 
-    addVerificationMethod(issuer.subject, issuer.did, KeyPair.fromJSON(issuer.authKey), issuerVerificationMethod);
+    addVerificationMethod(
+        issuer.subject,
+        issuer.did,
+        KeyPair.fromJSON(issuer.authKey),
+        issuerVerificationMethod);
     ```
 4. Holder: Add a verification method to Alice's DID document with the purpose to present her degree to a third party
     - [addVerificationMethod.js](addVerificationMethod.js)
@@ -67,7 +71,11 @@ In this process, you will complete the following steps from the perspective of o
     let holder = getWeakholdObject('./weakhold/Alice.json')
     let holderVerificationMethod = "aliceDegreePresentation";
 
-    addVerificationMethod(holder.subject, holder.did, KeyPair.fromJSON(holder.authKey), holderVerificationMethod);
+    addVerificationMethod(
+        holder.subject,
+        holder.did,
+        KeyPair.fromJSON(holder.authKey),
+        holderVerificationMethod);
     ```
 5. Holder: Setup a document representing Alice's degree, containing her DID
     - [createVerifiableCredential.js](createVerifiableCredential.js)
@@ -90,12 +98,19 @@ In this process, you will complete the following steps from the perspective of o
     let issuerVerificationMethod = "aliceDegreeVerification";
     let holder = getWeakholdObject('./weakhold/Alice.json')
 
-    createVerifiableCredential(issuer.subject, issuer.did, KeyPair.fromJSON(issuer.verifKey), issuerVerificationMethod, holder.did, holder.subject);
+    createVerifiableCredential(
+        issuer.subject,
+        issuer.did,
+        KeyPair.fromJSON(issuer.verifKey),
+        issuerVerificationMethod,
+        holder.did,
+        holder.subject);
     ```
 7. Holder: Alice verifies the credentials to make sure it was actually signed by key associated to the University DID
     - [checkVerifiableCredential.js](checkVerifiableCredential.js)
     ```javascript
-    checkVerifiableCredential('./signedCredentials/signedVC.json');
+    let signedVcPath = './signedCredentials/signedVC.json';
+    checkVerifiableCredential(signedVcPath);
     ```
 8. Holder: Alice signs verifiable credential with private key of Alices's verification method for a verifiable presentation
     - [createVerifiablePresentation.js](createVerifiablePresentation.js)
@@ -103,13 +118,20 @@ In this process, you will complete the following steps from the perspective of o
     //Issue and sign verifiable credential from weakhold object
     let holder = getWeakholdObject('./weakhold/Alice.json')
     let holderVerificationMethod = "aliceDegreePresentation";
+    let signedVcPath = './signedCredentials/signedVC.json';
 
-    createVerifiablePresentation(holder.subject, holder.did, KeyPair.fromJSON(holder.verifKey), holderVerificationMethod, './signedCredentials/signedVC.json');
+    createVerifiablePresentation(
+        holder.subject,
+        holder.did,
+        KeyPair.fromJSON(holder.verifKey),
+        holderVerificationMethod,
+        signedVcPath);
     ```
 9. Verifier: Verify Alice's and the University's signatures with their respective public keys
     - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
     ```javascript
-    checkVerifiablePresentation('./signedCredentials/signedVP.json');
+    let signedVpPath = './signedCredentials/signedVP.json';
+    checkVerifiablePresentation(signedVpPath);
     ```
 10. Issuer: Unfortunately the University found out, that Alice was cheating on her final exam. Thus the University revokes the verification of Alice's credential
     - [removeVerificationMethod.js](removeVerificationMethod.js)

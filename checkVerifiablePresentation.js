@@ -22,4 +22,5 @@ async function checkVerifiablePresentation(vpPath) {
 
 exports.checkVerifiablePresentation = checkVerifiablePresentation;
 
-checkVerifiablePresentation('./signedCredentials/signedVP.json');
+let signedVpPath = './signedCredentials/signedVP.json';
+checkVerifiablePresentation(signedVpPath);

@@ -52,5 +52,11 @@ exports.createVerifiablePresentation = createVerifiablePresentation;
 //Issue and sign verifiable credential from weakhold object
 let holder = getWeakholdObject('./weakhold/Alice.json')
 let holderVerificationMethod = "aliceDegreePresentation";
+let signedVcPath = './signedCredentials/signedVC.json';
 
-createVerifiablePresentation(holder.subject, holder.did, KeyPair.fromJSON(holder.verifKey), holderVerificationMethod, './signedCredentials/signedVC.json');
+createVerifiablePresentation(
+    holder.subject,
+    holder.did,
+    KeyPair.fromJSON(holder.verifKey),
+    holderVerificationMethod,
+    signedVcPath);

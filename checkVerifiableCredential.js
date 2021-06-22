@@ -22,4 +22,6 @@ async function checkVerifiableCredential(vcPath) {
 
 exports.checkVerifiableCredential = checkVerifiableCredential;
 
-checkVerifiableCredential('./signedCredentials/signedVC.json');
+
+let signedVcPath = './signedCredentials/signedVC.json';
+checkVerifiableCredential(signedVcPath);

@@ -70,4 +70,9 @@ let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
 let issuerVerificationMethod = "aliceDegreeVerification";
 let holder = getWeakholdObject('./weakhold/Alice.json')
 
-createVerifiableCredential(issuer.subject, issuer.did, KeyPair.fromJSON(issuer.verifKey), issuerVerificationMethod, holder.did, holder.subject);
+createVerifiableCredential(
+    issuer.subject,
+    issuer.did,
+    KeyPair.fromJSON(issuer.verifKey),
+    issuerVerificationMethod,
+    holder.did, holder.subject);
