@@ -10,6 +10,18 @@ As described [here](https://www.iota.org/solutions/digital-identity), IOTA Ident
 - Issuer (University of Oslo)
 - Verifier (IOTA Foundation)
 
+### Terms
+|Term   | Definition    |
+|:---   |:---           |
+| [Decentralized Identifier (DID)](https://www.w3.org/TR/did-core/#dfn-decentralized-identifiers) |A globally unique persistent identifier that does not require a centralized registration authority and is often generated and/or registered cryptographically.|
+| [DID Subject](https://www.w3.org/TR/did-core/#dfn-did-subjects)          |The entity identified by a DID and described by a DID document. Anything can be a DID subject: person, group, organization, physical thing, digital thing, logical thing, etc.  |
+| [DID Document](https://www.w3.org/TR/did-core/#dfn-did-documents)          |A set of data describing the DID subject, including mechanisms, such as cryptographic public keys, that the DID subject or a DID delegate can use to authenticate itself and prove its association with the DID  |
+| [Verification Method](https://www.w3.org/TR/did-core/#dfn-verification-method)   |A set of parameters that can be used together with a process to independently verify a proof. For example, a cryptographic public key can be used as a verification method with respect to a digital signature; in such usage, it verifies that the signer possessed the associated cryptographic private key. |
+| [Verifiable Credential](https://www.w3.org/TR/did-core/#dfn-verifiable-credentials) | A standard data model and representation format for cryptographically-verifiable digital credentials. It is signed by the issuer, to prove control over the Verifiable Credential with a nonce or timestamp. |
+| Verifiable Presentation | A Verifiable Presentation is the format in which a (collection of) Verifiable Credential(s) gets shared. It is signed by the subject, to prove control over the Verifiable Credential with a nonce or timestamp. |
+| [DID Resolution](https://www.w3.org/TR/did-core/#dfn-did-resolution)  | The process that takes as its input a DID and a set of resolution options and returns a DID document in a conforming representation plus additional metadata.  |
+
+### Flow-Chart
 ![banner](./Identity_Tutorial_Chart.png)
 
 ### Key Storage
@@ -127,7 +139,7 @@ In this process, you will complete the different steps from the perspective of o
         holderVerificationMethod,
         signedVcPath);
     ```
-9. **Verifier:** Verify Alice's and the University's signatures with their respective public keys
+9. **Verifier:** The IOTA Foundation verfies Alice's and the University's signatures with their respective public keys
     - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
     ```javascript
     let signedVpPath = './signedCredentials/signedVP.json';
@@ -146,7 +158,7 @@ In this process, you will complete the different steps from the perspective of o
         KeyPair.fromJSON(issuer.authKey),
         verifiactionMethodName);
     ```
-11. **Verifier:** Verify Alice's and the University's signatures again and see the University revoked their verification
+11. **Verifier:** The IOTA Foundation verifies Alice's and the University's signatures again and finds out that the University revoked their verification
     - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
     ```javascript
     let signedVpPath = './signedCredentials/signedVP.json';
