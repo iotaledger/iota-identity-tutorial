@@ -2,7 +2,7 @@
 
 ### Problem Description
 In this tutorial you will utilize the [WASM binding of the IOTA Identity framework](https://github.com/iotaledger/identity.rs/tree/dev/bindings/wasm/examples) to solve the problem described below. To follow along please clone this repo and make sure to install the npm/yarn package *@iota/identity-wasm@dev* as described [here](https://github.com/iotaledger/identity.rs/blob/dev/bindings/wasm/README.md#install-the-library):
-> Alice recently graduated from the University of Oslo with a Bachelors of Computer Science. Now she wants to apply for a remote job at the IOTA Foundation and needs to digitally prove the existence and validity of her degree. What she needs is an immutable and verifiable credential, which has been approved by both the University of Oslo and herself, before presenting it to her possible new employer.
+> Alice recently graduated from the University of Oslo with a Bachelor of Computer Science. Now she wants to apply for a remote job at the IOTA Foundation and needs to digitally prove the existence and validity of her degree. What she needs is an immutable and verifiable credential, which has been approved by both the University of Oslo and herself, before presenting it to her possible new employer.
 
 ### Roles
 As described [here](https://www.iota.org/solutions/digital-identity), IOTA Identity builds on the W3C's proposed standards for a digital identity framework and thus is based on three roles:
