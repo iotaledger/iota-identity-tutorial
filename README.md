@@ -1,7 +1,7 @@
 ## IOTA Identity Tutorial (WASM-Binding)
 
 ### Problem Description
-Within the following code examples you will utilize the [WASM binding of the IOTA Identity framework](https://github.com/iotaledger/identity.rs/tree/dev/bindings/wasm/examples) to solve the problem described below:
+In this tutorial you will utilize the [WASM binding of the IOTA Identity framework](https://github.com/iotaledger/identity.rs/tree/dev/bindings/wasm/examples) to solve the problem described below. To follow along please clone this repo and make sure to install the npm/yarn package *@iota/identity-wasm@dev* as described [here](https://github.com/iotaledger/identity.rs/blob/dev/bindings/wasm/README.md#install-the-library):
 > Alice recently graduated from the University of Oslo with a Bachelors of Computer Science. Now she wants to apply for a remote job at the IOTA Foundation and needs to digitally prove the existence and validity of her degree. What she needs is an immutable and verifiable credential, which has been approved by both the University of Oslo and herself, before presenting it to her possible new employer.
 
 ### Roles
@@ -14,10 +14,10 @@ As described [here](https://www.iota.org/solutions/digital-identity), IOTA Ident
 
 ### Key Storage
 - In this tutorial, the key pairs for every newly created or updated DID document will be stored in Weakhold
-    - Ok, ok it's just JSON files in a folder, but it get's the job done
-    - e.g. ./weakhold/Alice.json
+    - Ok, ok, it's just a couple of JSON files in a folder, but it get's the job done
+    - The files are stored in the Folder *weakhold* (e.g. ./weakhold/Alice.json)
 
-:warning: **Needless to say that this is no proper key storage solution and for professional IOTA implementations you should use our key management framework [Stronghold](https://github.com/iotaledger/stronghold.rs).**
+:warning: **Needless to say that this is no proper key storage solution and for professional IOTA implementations we strongly recommend using our key management framework [Stronghold](https://github.com/iotaledger/stronghold.rs).**
 
 Example Weakhold file:
 ```json
@@ -40,18 +40,18 @@ Example Weakhold file:
 ```
 
 ### Steps
-In this process, you will complete the following steps from the perspective of one of the mentioned roles:
-1. Holder: Create a DID (Decentralized Identifier) document for Alice
+In this process, you will complete the different steps from the perspective of one of the mentioned roles above:
+1. **Holder:** Create a DID (Decentralized Identifier) document for Alice
     - [createDid.js](createDid.js)
     ```javascript
     createDid('Alice');
     ```
-2. Issuer: Create a DID document for the University of Oslo
+2. **Issuer:** Create a DID document for the University of Oslo
     - [createDid.js](createDid.js)
     ```javascript
     createDid('University of Oslo');
     ```
-3. Issuer: Add a verification method to the University's DID document with the purpose to verify Alice's degree
+3. **Issuer:** Add a verification method to the University's DID document with the purpose to verify Alice's degree
     - [addVerificationMethod.js](addVerificationMethod.js)
     ```javascript
     //Add verification method to issuer DID
@@ -64,7 +64,7 @@ In this process, you will complete the following steps from the perspective of o
         KeyPair.fromJSON(issuer.authKey),
         issuerVerificationMethod);
     ```
-4. Holder: Add a verification method to Alice's DID document with the purpose to present her degree to a third party
+4. **Holder:** Add a verification method to Alice's DID document with the purpose to present her degree to a third party
     - [addVerificationMethod.js](addVerificationMethod.js)
     ```javascript
     //Add verification method to holder DID
@@ -77,7 +77,7 @@ In this process, you will complete the following steps from the perspective of o
         KeyPair.fromJSON(holder.authKey),
         holderVerificationMethod);
     ```
-5. Holder: Setup a document representing Alice's degree, containing her DID
+5. **Holder:** Setup a document representing Alice's degree, containing her DID
     - [createVerifiableCredential.js](createVerifiableCredential.js)
     ```javascript
     //This part is already hard coded in "createVerifiableCredential.js"
@@ -90,7 +90,7 @@ In this process, you will complete the following steps from the perspective of o
         "GPA": "4.0"
     }
     ```
-6. Issuer: Sign degree document with the private key of the University's verification method for a verifiable credential
+6. **Issuer:** Sign degree document with the private key of the University's verification method for a verifiable credential
     - [createVerifiableCredential.js](createVerifiableCredential.js)
     ```javascript
     //Issue and sign verifiable credential from weakhold object
@@ -106,13 +106,13 @@ In this process, you will complete the following steps from the perspective of o
         holder.did,
         holder.subject);
     ```
-7. Holder: Alice verifies the credentials to make sure it was actually signed by key associated to the University DID
+7. **Holder:** Alice verifies the credentials to make sure it was actually signed by a key associated to the University DID
     - [checkVerifiableCredential.js](checkVerifiableCredential.js)
     ```javascript
     let signedVcPath = './signedCredentials/signedVC.json';
     checkVerifiableCredential(signedVcPath);
     ```
-8. Holder: Alice signs verifiable credential with private key of Alices's verification method for a verifiable presentation
+8. **Holder:** Alice signs verifiable credential with private key of Alices's verification method for a verifiable presentation
     - [createVerifiablePresentation.js](createVerifiablePresentation.js)
     ```javascript
     //Issue and sign verifiable credential from weakhold object
@@ -127,13 +127,13 @@ In this process, you will complete the following steps from the perspective of o
         holderVerificationMethod,
         signedVcPath);
     ```
-9. Verifier: Verify Alice's and the University's signatures with their respective public keys
+9. **Verifier:** Verify Alice's and the University's signatures with their respective public keys
     - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
     ```javascript
     let signedVpPath = './signedCredentials/signedVP.json';
     checkVerifiablePresentation(signedVpPath);
     ```
-10. Issuer: Unfortunately the University found out, that Alice was cheating on her final exam. Thus the University revokes the verification of Alice's credential
+10. **Issuer:** Unfortunately the University found out, that Alice was cheating on her final exam. Thus the University revokes the verification of Alice's credential
     - [removeVerificationMethod.js](removeVerificationMethod.js)
     ```javascript
     //Issue and sign verifiable credential from weakhold object
@@ -145,4 +145,10 @@ In this process, you will complete the following steps from the perspective of o
         issuer.did,
         KeyPair.fromJSON(issuer.authKey),
         verifiactionMethodName);
+    ```
+11. **Verifier:** Verify Alice's and the University's signatures again and see the University revoked their verification
+    - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
+    ```javascript
+    let signedVpPath = './signedCredentials/signedVP.json';
+    checkVerifiablePresentation(signedVpPath);
     ```
