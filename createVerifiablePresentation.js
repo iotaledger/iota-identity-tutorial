@@ -37,7 +37,7 @@ async function createVerifiablePresentation(holderSubject, holderDid, holderVeri
     console.log(signedVp);
 
     //Write signed verifiable presentation to file in pretty-printed JSON format
-    let vpFilepath = './signedCredentials/signedVP.json'
+    let vpFilepath = './signedCredentials/offlineVerifiablePresentation.json'
     try {
         writeFileSync(vpFilepath, JSON.stringify(signedVp, null, 4))
         } catch (err) {
@@ -52,7 +52,7 @@ exports.createVerifiablePresentation = createVerifiablePresentation;
 //Issue and sign verifiable credential from weakhold object
 let holder = getWeakholdObject('./weakhold/Alice.json')
 let holderVerificationMethod = "aliceDegreePresentation";
-let signedVcPath = './signedCredentials/signedVC.json';
+let signedVcPath = './signedCredentials/offlineVerifiableCredential.json';
 
 createVerifiablePresentation(
     holder.subject,

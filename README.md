@@ -20,6 +20,7 @@ As described [here](https://www.iota.org/solutions/digital-identity), IOTA Ident
 | [Verifiable Credential](https://www.w3.org/TR/did-core/#dfn-verifiable-credentials) | A standard data model and representation format for cryptographically-verifiable digital credentials. It is signed by the issuer, to prove control over the Verifiable Credential with a nonce or timestamp. |
 | Verifiable Presentation | A Verifiable Presentation is the format in which a (collection of) Verifiable Credential(s) gets shared. It is signed by the subject, to prove control over the Verifiable Credential with a nonce or timestamp. |
 | [DID Resolution](https://www.w3.org/TR/did-core/#dfn-did-resolution)  | The process that takes as its input a DID and a set of resolution options and returns a DID document in a conforming representation plus additional metadata.  |
+| [Merkle Key Collection](https://medium.com/asecuritysite-when-bob-met-alice/how-can-i-have-a-1-000-private-keys-but-just-one-public-key-well-thats-merkle-magic-6c323439417b)  | By using a Merkle Tree you can verify the ownership of multiple private keys (Must be a power of 2) with only one public key.  |
 
 ### Flow-Chart
 ![banner](./Identity_Tutorial_Chart.png)
@@ -53,30 +54,36 @@ Example Weakhold file:
 
 ### Steps
 In this process, you will complete the different steps from the perspective of one of the mentioned roles above:
-1. **Holder:** Create a DID (Decentralized Identifier) document for Alice
+
+1. **Holder:** Create a DID (Decentralized Identifier) document for Alice. After this step you will find Alice's weakhold file in [./weakhold/Alice.json](./weakhold/Alice.json).
     - [createDid.js](createDid.js)
     ```javascript
     createDid('Alice');
     ```
-2. **Issuer:** Create a DID document for the University of Oslo
+
+2. **Issuer:** Create a DID document for the University of Oslo. After this step you will find University of Oslo's weakhold file in [./weakhold/UniversityofOslo.json](./weakhold/UniversityofOslo.json).
     - [createDid.js](createDid.js)
     ```javascript
     createDid('University of Oslo');
     ```
-3. **Issuer:** Add a verification method to the University's DID document with the purpose to verify Alice's degree
+
+3. **Issuer:** Add a verification method "degreeVerifications" to the University's DID document with the purpose to verify Alice's degree. Since it's expected, that the University will have to sign more than just Alice's degree, this verification method is generated with a set of Merkle keys. These signatures can all be proved by a single public key, while retaining the ability to revoke them separately. Note that the newly added verification method is of the *type* "MerkleKeyCollection".
     - [addVerificationMethod.js](addVerificationMethod.js)
     ```javascript
-    //Add verification method to issuer DID
+    //Add verification method with collection of merkle keys to issuer DID
+    //This enables the issuer to sign and revoke multiple documents without having to remove the verification method for each revocation
     let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
-    let issuerVerificationMethod = "aliceDegreeVerification";
+    let issuerVerificationMethod = "degreeVerifications";
 
     addVerificationMethod(
-        issuer.subject,
-        issuer.did,
-        KeyPair.fromJSON(issuer.authKey),
-        issuerVerificationMethod);
+        subjectName = issuer.subject,
+        did = issuer.did,
+        authKey = KeyPair.fromJSON(issuer.authKey),
+        verificationMethodName = issuerVerificationMethod,
+        merkleKeys = true);
     ```
-4. **Holder:** Add a verification method to Alice's DID document with the purpose to present her degree to a third party
+
+4. **Holder:** Add a verification method to Alice's DID document with the purpose to present her degree to a third party. Since Alice only needs one key pair to the verifiable presentation of her credential, this verification method is generated with a simple private/public key pair. Note that the newly added verification method is of the *type* "Ed25519VerificationKey".
     - [addVerificationMethod.js](addVerificationMethod.js)
     ```javascript
     //Add verification method to holder DID
@@ -84,12 +91,14 @@ In this process, you will complete the different steps from the perspective of o
     let holderVerificationMethod = "aliceDegreePresentation";
 
     addVerificationMethod(
-        holder.subject,
-        holder.did,
-        KeyPair.fromJSON(holder.authKey),
-        holderVerificationMethod);
+        subjectName = holder.subject,
+        did = holder.did,
+        authKey = KeyPair.fromJSON(holder.authKey),
+        verificationMethodName = holderVerificationMethod,
+        merkleKeys = false);
     ```
-5. **Holder:** Setup a document representing Alice's degree, containing her DID
+
+5. **Holder:** Setup a document representing Alice's degree, containing her DID.
     - [createVerifiableCredential.js](createVerifiableCredential.js)
     ```javascript
     //This part is already hard coded in "createVerifiableCredential.js"
@@ -102,35 +111,38 @@ In this process, you will complete the different steps from the perspective of o
         "GPA": "4.0"
     }
     ```
-6. **Issuer:** Sign degree document with the private key of the University's verification method for a verifiable credential
+
+6. **Issuer:** Sign degree document with the first key in the Merkle key collection of the University's verification method in order to get a verifiable credential. After this step you will find the verifiable credential of Alice's degree in [./signedCredentials/offlineVerifiableCredential.json](./signedCredentials/offlineVerifiableCredential.json).
     - [createVerifiableCredential.js](createVerifiableCredential.js)
     ```javascript
     //Issue and sign verifiable credential from weakhold object
     let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
-    let issuerVerificationMethod = "aliceDegreeVerification";
+    let issuerVerificationMethod = "degreeVerifications";
     let holder = getWeakholdObject('./weakhold/Alice.json')
 
     createVerifiableCredential(
         issuer.subject,
         issuer.did,
-        KeyPair.fromJSON(issuer.verifKey),
+        KeyCollection.fromJSON(issuer.verifKey),
         issuerVerificationMethod,
         holder.did,
         holder.subject);
     ```
+
 7. **Holder:** Alice verifies the credentials to make sure it was actually signed by a key associated to the University DID
     - [checkVerifiableCredential.js](checkVerifiableCredential.js)
     ```javascript
-    let signedVcPath = './signedCredentials/signedVC.json';
+    let signedVcPath = './signedCredentials/offlineVerifiableCredential.json';
     checkVerifiableCredential(signedVcPath);
     ```
-8. **Holder:** Alice signs verifiable credential with private key of Alices's verification method for a verifiable presentation
+
+8. **Holder:** Alice signs verifiable credential with private key of Alices's verification method in order to get a verifiable presentation. After this step you will find the verifiable presentation of Alice's degree in [./signedCredentials/offlineVerifiablePresentation.json](./signedCredentials/offlineVerifiablePresentation.json).
     - [createVerifiablePresentation.js](createVerifiablePresentation.js)
     ```javascript
     //Issue and sign verifiable credential from weakhold object
     let holder = getWeakholdObject('./weakhold/Alice.json')
     let holderVerificationMethod = "aliceDegreePresentation";
-    let signedVcPath = './signedCredentials/signedVC.json';
+    let signedVcPath = './signedCredentials/aliceVerifiableCredential.json';
 
     createVerifiablePresentation(
         holder.subject,
@@ -139,26 +151,42 @@ In this process, you will complete the different steps from the perspective of o
         holderVerificationMethod,
         signedVcPath);
     ```
-9. **Verifier:** The IOTA Foundation verfies Alice's and the University's signatures with their respective public keys
+
+9. **Verifier:** The IOTA Foundation verfies Alice's and the University's signatures with their respective public keys by checking the verifiable presentation.
     - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
     ```javascript
-    let signedVpPath = './signedCredentials/signedVP.json';
+    let signedVpPath = './signedCredentials/offlineVerifiablePresentation.json';
     checkVerifiablePresentation(signedVpPath);
     ```
-10. **Issuer:** Unfortunately the University found out, that Alice was cheating on her final exam. Thus the University revokes the verification of Alice's credential
+
+10. **Issuer:** Unfortunately the University found out, that Alice was cheating on her final exam. Thus the University revokes the verification of Alice's credential. Since we have used a Merkle key collection for the University's verification method, this step can be done two ways. Either removing the whole verification method or only revoking the one Merkle key used for the signature. Below you can find both ways. Note that also Alice could revoke her signature on the verifiable presentation, by removing her verification method.
     - [removeVerificationMethod.js](removeVerificationMethod.js)
     ```javascript
-    //Issue and sign verifiable credential from weakhold object
-    let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
-    let verifiactionMethodName = "aliceDegreeVerification";
+    //Remove whole verification method and thus also the used key pair for signatures
+    let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json');
+    let verificationMethodName  = "degreeVerifications";
 
     removeVerificationMethod(
         issuer.subject,
         issuer.did,
         KeyPair.fromJSON(issuer.authKey),
-        verifiactionMethodName);
+        verificationMethodName );
     ```
-11. **Verifier:** The IOTA Foundation verifies Alice's and the University's signatures again and finds out that the University revoked their verification
+    - [removeMerkleKey.js](removeMerkleKey.js)
+    ```javascript
+    //Revoke signatures, which used the first key in the Merkle key collection
+    let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json');
+    let verificationMethodName  = "degreeVerifications";
+
+    removeMerkleKey(
+        issuer.subject,
+        issuer.did,
+        KeyPair.fromJSON(issuer.authKey),
+        verificationMethodName,
+        KeyCollection.fromJSON(issuer.verifKey));
+    ```
+
+11. **Verifier:** The IOTA Foundation verifies Alice's and the University's signatures again by checking the verifiable presentation and finds out that the University revoked their signature.
     - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
     ```javascript
     let signedVpPath = './signedCredentials/signedVP.json';

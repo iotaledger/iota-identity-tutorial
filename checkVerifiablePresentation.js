@@ -22,5 +22,5 @@ async function checkVerifiablePresentation(vpPath) {
 
 exports.checkVerifiablePresentation = checkVerifiablePresentation;
 
-let signedVpPath = './signedCredentials/signedVP.json';
+let signedVpPath = './signedCredentials/offlineVerifiablePresentation.json';
 checkVerifiablePresentation(signedVpPath);

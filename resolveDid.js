@@ -23,4 +23,4 @@ async function resolveDid(did) {
 
 exports.resolveDid = resolveDid;
 
-//&resolution('did:iota:3kedhpwvFBdopsqGZgT8aCr5cuDgRkwesjds4mxbVZg8').then(console.log);
+//resolveDid('did:iota:JCMSA2d7AuVXrxEXmeNw9vTnj8Xw2e5sFGzJwLensEvj').then(console.log);

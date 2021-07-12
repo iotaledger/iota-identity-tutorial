@@ -7,23 +7,18 @@ const { CLIENT_CONFIG } = require('./config');
 
 
 //Logs relevant Did information
-function storeWeakholdObject(holder, doc, messageId, authKey, verifKey = null) {
+function storeWeakholdObject(holder, doc, messageId, authKey, verificationMethodName = null, verifKey = null) {
     let yourDid = {}
 
     yourDid['subject'] = holder;
     yourDid['did'] = JSON.parse(doc).id;
     yourDid['messageId'] = messageId;
     yourDid['explorerUrl'] = getExplorerUrl(CLIENT_CONFIG.network.toString(), messageId);
-    yourDid.authKey = {};
-    yourDid.authKey['type'] = JSON.parse(authKey).type;
-    yourDid.authKey['public'] = JSON.parse(authKey).public;
-    yourDid.authKey['secret'] = JSON.parse(authKey).secret;
+    yourDid.authKey = authKey;
 
     if (verifKey !== null) {
-      yourDid.verifKey = {};
-      yourDid.verifKey['type'] = JSON.parse(verifKey).type;
-      yourDid.verifKey['public'] = JSON.parse(verifKey).public;
-      yourDid.verifKey['secret'] = JSON.parse(verifKey).secret;
+      yourDid.verifKey = verifKey;
+      yourDid.verifKey.methodName = verificationMethodName;
     }
 
     //Write Did Information to weakhold

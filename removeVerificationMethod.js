@@ -20,7 +20,7 @@ const { CLIENT_CONFIG } = require('./config');
     ClientConfig object. This will ensure that all the API calls use a consistent node and network.
     @param {{network: string, node: string}} clientConfig
 */
-async function removeVerificationMethod(issuerSubject, issuerDid, issuerAuthKey, verifiactionMethodName) {
+async function removeVerificationMethod(issuerSubject, issuerDid, issuerAuthKey, verificationMethodName ) {
     // Create a default client configuration from the parent config network.
     const config = Config.fromNetwork(CLIENT_CONFIG.network);
 
@@ -38,12 +38,12 @@ async function removeVerificationMethod(issuerSubject, issuerDid, issuerAuthKey,
     let issuerDoc = Document.fromJSON(resolvedIssuerDid.document);
 
     //Remove the public key that signed the VC - effectively revoking the VC as it will no longer be able to verify
-    issuerDoc.removeMethod(DID.parse(issuerDoc.id.toString()+"#"+verifiactionMethodName));
+    issuerDoc.removeMethod(DID.parse(issuerDoc.id.toString()+"#"+verificationMethodName ));
     issuerDoc.previousMessageId = messageId;
     issuerDoc.sign(issuerAuthKey);
 
     //Log updated DID document
-    console.log('\n',`This is ${issuerSubject}'s updated DID document. Note that the verifaction method '${verifiactionMethodName}' was removed:`);
+    console.log('\n',`This is ${issuerSubject}'s updated DID document. Note that the verifaction method '${verificationMethodName }' was removed:`);
     console.log(issuerDoc);
 
     //Publish the Identity to the IOTA Network, this may take a few seconds to complete Proof-of-Work.
@@ -55,12 +55,12 @@ async function removeVerificationMethod(issuerSubject, issuerDid, issuerAuthKey,
 
 exports.removeVerificationMethod = removeVerificationMethod;
 
-//Issue and sign verifiable credential from weakhold object
-let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
-let verifiactionMethodName = "aliceDegreeVerification";
+//Remove whole verification method and thus also the used key pair for signatures
+let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json');
+let verificationMethodName  = "degreeVerifications";
 
 removeVerificationMethod(
     issuer.subject,
     issuer.did,
     KeyPair.fromJSON(issuer.authKey),
-    verifiactionMethodName);
+    verificationMethodName );
