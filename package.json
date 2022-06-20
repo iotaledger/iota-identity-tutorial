@@ -1,15 +1,19 @@
 {
-  "name": "identity",
-  "version": "1.0.0",
-  "description": "",
-  "main": "createDid.js",
+  "name": "iota-identity-tutorial",
+  "version": "0.1.0",
+  "description": "Iota Identity Tutorial",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iotaledger/iota-identity-tutorial.git"
+  },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@iota/client": "0.6.1",
-    "@iota/identity-wasm": "0.3.4"
-  }
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/iotaledger/iota-identity-tutorial/issues"
+  },
+  "homepage": "https://github.com/iotaledger/iota-identity-tutorial#readme"
 }
