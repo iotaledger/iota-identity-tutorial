@@ -1,6 +1,4 @@
 ---
-description: In this tutorial you will utilize the WASM binding of the IOTA Identity framework to digitally prove the existence and validity of a university degree.
-image: /identity_tutorial_chart.png
 keywords:
 - wasm
 - decentralized identifiers
@@ -14,7 +12,7 @@ keywords:
 
 # Digitally Validate a Degree
 
-In this tutorial, you will use the [WASM binding of the IOTA Identity framework](../libraries/wasm/getting_started) to digitally prove the existence and validity of a university degree.
+In this tutorial, you will use the WASM binding of the IOTA Identity framework to digitally prove the existence and validity of a university degree.
 
 
 The `src/` directory contains scripts that can be run separately by providing command line arguments. Make sure that the npm dependencies - which include 
@@ -53,38 +51,38 @@ As described in the [Digital Identities Solution](https://www.iota.org/solutions
 [![banner](/sequence-diagram.png)](/img/identity_tutorial_chart.png)
 
 ## Storage
-In this tutorial, [Stronghold](https://github.com/iotaledger/stronghold.rs) will be used to securly store private keys. The Identity Framework already has [Stronghold bindings for Node.js](https://github.com/iotaledger/identity.rs/tree/dev/bindings/stronghold-nodejs). We will be using them in this tutorial. 
-For simplicity, each stronhold file will be responsible for storing only one DID. 
 
+In this tutorial, [Stronghold](https://github.com/iotaledger/stronghold.rs) will be used to securly store private keys. The Identity Framework already has [Stronghold bindings for Node.js](https://github.com/iotaledger/identity.rs/tree/dev/bindings/stronghold-nodejs). We will be using them in this tutorial.
+For simplicity, each stronghold file will be responsible for storing only one DID.
 
 ## Steps
 
 In this process, you will complete the different steps from the perspective of one of the mentioned roles above:
 
-### 1. **Holder**: Create a DID.
+### 1. **Holder**: Create a DID
 
-The first thing you will need to do in this tutorial is to create a DID(Decentralized Identifier) Document for Alice.
-(createDID)[./src/createDid.ts] can be run using 
+The first thing you will need to do in this tutorial is to create a DID (Decentralized Identifier) Document for Alice.
+The script [createDid.ts](./src/createDid.ts) can be used to create DIDs using the command:
+
 ```bash
 npm run start create-did <name> <stronghold-password>
 ```
-This command will invoke [createDid.ts](./src/createDid.ts).
 
 For Alice, a DID can be created using:
 
 ```bash
-npm run start create-did alice2 alice-password
+npm run start create-did alice alice-password
 
 ```
 
-This will create a minimal DID document for alice, and publishes it to the Tangle. A Stronghold file `alice.hodl` will be created under "/stronhold-files" which contains the Account's state and the private key of the main Verification Method of the DID.
+This will create a minimal DID document for alice, and publishes it to the Tangle. A Stronghold file `alice.hodl` will be created under `/stronhold-files` which contains the Account's state and the private key of the main verification method of the DID.
 `alice-password` will be used as a password for the stronghold storage. Needless to say that passwords must be more secure in production applications.
 
-
+See [Creating a Decentralized Identity](https://wiki.iota.org/identity.rs/concepts/decentralized_identifiers/create) for more information about generating DIDs.
 
 ### 2. **Issuer**: Create a DID
 
-Once you have created the Alice's DID(Decentralized Identifier), you should do the same for the University of Oslo.
+Once you have created the Alice's DID, you should do the same for the University of Oslo.
 
 ```bash
 npm run start create-did uni-of-oslo uni-password
@@ -92,16 +90,17 @@ npm run start create-did uni-of-oslo uni-password
 
 `uni-of-oslo.hodl` will be created under `/stronhold-files`.
 
-
 ### 3. **Issuer**: Add a Verification Method
 
-Since the university will need to issue a signed Verifiable Credential for Alice, a verification method should be added to the University's DID document.
+Since the university will need to issue a signed verifiable credential for Alice, a verification method should be added to the university's DID document.
 Read more about adding verification methods in [update DID Documents](https://wiki.iota.org/identity.rs/concepts/decentralized_identifiers/update).
 
 To add a Verification Method the following command can be used:
+
 ```bash
 npm run start create-vm <identity-name> <stronghold-password> <verification-fragment>
 ```
+
 This command will invoke [verificatoinMethods.ts](./src/verificationMethods.ts).
 
 Note that `identity-name` is used to identify the Stronghold file location in `/Stronghold-files` while `verification-fragment` is used to identify the Verification Method inside the DID Document.
@@ -121,7 +120,8 @@ Similar to the issuer, the following command can be run to add a verification me
 npm run start create-vm alice alice-password key-1
 ```
 
-###5: **Issuer**: Create Revocation ordered list 
+### 5: **Issuer**: Create Revocation ordered list
+
 In order for the issuer to be able to revoke credentials in the future, a revocation list is needed. See [Verifiable Credential Revocation](https://wiki.iota.org/identity.rs/concepts/verifiable_credentials/revocation) for further details.
 The following command can be used to create a revocation list:
 
@@ -129,27 +129,34 @@ The following command can be used to create a revocation list:
 npm run start create-revocation-list <identity-name> <stronghold-password> <revocation-fragment>
 ```
 
+This will invoke [revocationBitmap.ts](./src/revocationBitmap.ts).
+
 For the Univeristy of Oslo use:
 
 ```bash
 npm run start create-revocation-list uni-of-oslo uni-password rev-1
 ```
+
 Notice that `rev-1` is used to identity this revocation list inside the DID document.
 
-###5 **Issuer**: Create Verifiable Credential
-University of Oslo can now issue a verifiable credential for Alice. The following command can be used to create a verifiable credential: 
+### 5 **Issuer**: Create Verifiable Credential
+
+University of Oslo can now issue a verifiable credential for Alice. The following command can be used to create a verifiable credential:
+
 ```bash
 npm run start create-vc <issuer-name> <issuerPassword> <subjectName> <subjectDid> <verificationMethodFragment> <revocationBitmapFragment> <revocationIndex>
 ```
 
-For the Univeristy of Oslo, run the following command:
+This will invoke [verifiableCredentials.ts](./src/verifiableCredentials.ts).
+
+To create a verifiable credential for Alice, run the following command:
+
 ```bash
 npm run start create-vc uni-of-oslo uni-password alice <subjectDid> key-1 rev-1 5
 ```
 
-Notice that `<subjectDid>` needs to be replaced with Alice's DID. The reason we didn't use Alice's Stronghold file, is because the issuer doesn't have access to it in a real world scenario.
+Notice that `<subjectDid>` needs to be replaced with Alice's DID. The reason we didn't use Alice's Stronghold file, is that the issuer doesn't have access to it in a real world scenario.
 If you didn't note Alice's DID upon creating the DID, use `npm run start get-did alice alice-password` to log the DID saved in Alice's Stronghold file.
-
 
 This verifiable credential is given a revocation index of `5`, this will be used later when the verifiable credential will be revoked. \
 The command will execute the script in [verifiableCredentials.ts](./src/verifiableCredentials.ts) which creates a verifiable credential using values provided as arugments
@@ -157,54 +164,60 @@ and hard-coded values to describe the issued degree. This credential will be tie
 Once the script execution finishes, the file `alice-credential.json` will be created in the `credentials/` directory. The File contains the credential in JSON format
 and is uaually sent back to Alice to prove her degree.
 
+### 6 **Holder**: Create Verifiable Presentation
 
-
-###6 **Holder**: Create Verifiable Presentation
 Since Alice reveived the verifiable credential from the univerisity, she applies for a job at the IOTA Foundation. The foundation requests a verifiable presentation
 to be signed by alice that includes the challenge 'xyz123'.
-The script [verifiablePresentation.ts](./src/verifiablePresentation.ts) can be run with the command: 
+The script [verifiablePresentation.ts](./src/verifiablePresentation.ts) can be run with the command:
+
 ```bash
 npm run start create-vp <holder-name> <holder-password> <credential-file> <verification-method-fragment> <challenge>
 ```
+
 For Alice's case:
+
 ```bash
 npm run start create-vp alice alice-password alice-credential.json key-1 xyz123
 ```
+
 This will create a verifiable presentation of Alice's credential that includes the challenge and signed by Alice's `key-1` verification method.
 The resulted presentation is saved in `presentatins/alice-presentation.json`.
 
+### 7 **Verifier**: Verification
 
-###7 **Verifier**: Verification
-Now alice sends the signed verifiable presentaiton to the IOTA Foundation. The foundation now has to verify if everything is correct and the credential is valid. 
+Now alice sends the signed verifiable presentaiton to the IOTA Foundation. The foundation now has to verify if everything is correct and the credential is valid.
 
-The script [checkVerifiablePresentation](./src/verifiablePresentation.ts) can be run with the command: 
-```bash 
+The script [checkVerifiablePresentation](./src/verifiablePresentation.ts) can be run with the command:
+
+```bash
 npm run start verify-vp <presentation-file> <challenge>
 ```
+
 So the foundation can run:
+
 ```bash
 npm run start verify-vp alice-presentation.json xyz123
 
 ```
-Since everything was signed correctly, the verificatoin should succeed. 
 
+Since everything was signed correctly, the verificatoin should succeed.
 
-//Revoke signatures, which used the first key in the Merkle key collection
-###8 **Issuer**: Revocation:
+### 8 **Issuer**: Revocation
 
 Unfortunately the University found out, that Alice had cheated on her final exam. Therefore, the University wants to revoke the verification of Alice's credential.
 Since the revocation list `rev-1` with revocation index `5` were used upon creating the verifiable credential, revocation is now possible by updating the revocation list.
 
-[revocation.ts](./src/revocation.ts) can be run with the command: 
+[revocation.ts](./src/revocation.ts) can be run with the command:
 
 ```bash
 npm run start revoke-vc <issuer-name> <issuer-password> <revocation-bitmap-fragment> <revocation-index>
 ```
-To revoke Alice's Credential you can run: 
+
+To revoke Alice's Credential you can run:
+
 ```bash
 npm run start revoke-vc uni-of-oslo uni-password rev-1 5
 ```
 
 This will update the revocation list inside the issuer's DID Document and publish it to the tangle. Now if the IOTA Foundation tries to verify the credential again
-e.g. by running `npm run start verify-vp alice-presentation.json xyz123`, This will throw an error since the verification now fails. 
-
+e.g. by running `npm run start verify-vp alice-presentation.json xyz123`, This will throw an error since the verification now fails.
