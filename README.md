@@ -120,13 +120,13 @@ Similar to the issuer, the following command can be run to add a verification me
 npm run start create-vm alice alice-password key-1
 ```
 
-### 5: **Issuer**: Create Revocation ordered list
+### 5: **Issuer**: Create Revocation list
 
 In order for the issuer to be able to revoke credentials in the future, a revocation list is needed. See [Verifiable Credential Revocation](https://wiki.iota.org/identity.rs/concepts/verifiable_credentials/revocation) for further details.
 The following command can be used to create a revocation list:
 
 ```bash
-npm run start create-revocation-list <identity-name> <stronghold-password> <revocation-fragment>
+npm run start add-revocation-list <identity-name> <stronghold-password> <revocation-fragment>
 ```
 
 This will invoke [revocationBitmap.ts](./src/revocationBitmap.ts).

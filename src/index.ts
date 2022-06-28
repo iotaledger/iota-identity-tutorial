@@ -47,7 +47,7 @@ async function stronghold() {
     if (process.argv.length != 6) {
       console.error('Error: Command arguments are incorrect!')
       console.error(
-        `Please use: "npm run start create-revocation-list <identity-name> <stronghold-password> <revocation-fragment>`
+        `Please use: "npm run start add-revocation-list <identity-name> <stronghold-password> <revocation-fragment>`
       )
       return
     }
