@@ -134,7 +134,7 @@ This will invoke [revocationBitmap.ts](./src/revocationBitmap.ts).
 For the Univeristy of Oslo use:
 
 ```bash
-npm run start create-revocation-list uni-of-oslo uni-password rev-1
+npm run start add-revocation-list uni-of-oslo uni-password rev-1
 ```
 
 Notice that `rev-1` is used to identity this revocation list inside the DID document.
