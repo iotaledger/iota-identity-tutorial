@@ -20,8 +20,7 @@ async function checkVerifiablePresentation(
   challenge: string
 ) {
   // Get presentatoin from file.
-  const fileName = presentationFile + '.json'
-  const filePath = path.join('presentations', fileName)
+  const filePath = path.join('presentations', presentationFile)
   const verifiablePresentation = JSON.parse(readFileSync(filePath, 'utf-8'))
 
   // Deserialize the presentation from the holder.
