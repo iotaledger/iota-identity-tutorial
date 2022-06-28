@@ -4,7 +4,7 @@
   "description": "Iota Identity Tutorial",
   "main": "index.js",
   "scripts": {
-    "run": "ts-node --project ./tsconfig.json ./src/index.ts",
+    "start": "ts-node --project ./tsconfig.json ./src/index.ts",
     "lint": "eslint . --ext .ts"
   },
   "repository": {
