@@ -40,6 +40,7 @@ async function stronghold() {
     const password = process.argv[4]
     const fragment = process.argv[5]
     addVerificationMethod(name, password, fragment)
+    return
   }
 
   // Add Revocation List.
@@ -56,6 +57,7 @@ async function stronghold() {
     const fragment = process.argv[5]
 
     addRevocationBitmap(name, password, fragment)
+    return
   }
 
   // Create verifiable Credential.
@@ -83,6 +85,7 @@ async function stronghold() {
       revocationBitmapFragment,
       revocationIndex
     )
+    return
   }
 
   // Get DID.
@@ -97,6 +100,7 @@ async function stronghold() {
     const name = process.argv[3]
     const password = process.argv[4]
     loadDID(name, password, true)
+    return
   }
 
   // Create Verifiable Presentation.
@@ -120,6 +124,7 @@ async function stronghold() {
       fragment,
       challenge
     )
+    return
   }
 
   // Check Verifiable Presentation.
@@ -134,6 +139,7 @@ async function stronghold() {
     const presentationFile = process.argv[3]
     const challenge = process.argv[4]
     checkVerifiablePresentation(presentationFile, challenge)
+    return;
   }
 
   // Revoke Verifiable Credential.
@@ -154,8 +160,11 @@ async function stronghold() {
       issuerPassword,
       revocationBitmapFragment,
       parseInt(revocationIndex)
+      
     )
+    return
   }
+  console.error("Command not supported.")
 }
 
 stronghold().then(() => {})
