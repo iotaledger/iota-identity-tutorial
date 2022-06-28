@@ -6,8 +6,17 @@ import {
 } from '@iota/identity-wasm/node'
 import { loadDID } from './loadDid'
 import * as path from 'path'
-const { readFileSync, writeFileSync } = require('fs')
+import { readFileSync, writeFileSync } from 'fs'
 
+/**
+ * Creates a verifiable presentation from a verifiable credential. Saves the result in `presentations/<hodlerName>-presentation.json`.
+ *
+ * @param holderName Name of the holder to determin the Stronghold file in `/stronghold-files/<holderName>.hodl`.
+ * @param holderPassword Stronghold password.
+ * @param credentialFile Credential file in `credentials/<credentialFile>` for example "alice-credential.json".
+ * @param verificationMethodFragment VM with which the presentation will be signed with.
+ * @param challenge Challenge what will be included in the presentation before it being signed.
+ */
 async function createVerifiablePresentation(
   holderName: string,
   holderPassword: string,
@@ -16,7 +25,7 @@ async function createVerifiablePresentation(
   challenge: string
 ) {
   const filePath = path.join('credentials', credentialFile)
-  const verifiableCredential = JSON.parse(readFileSync(filePath))
+  const verifiableCredential = JSON.parse(readFileSync(filePath, 'utf-8'))
 
   const holder: Account = await loadDID(holderName, holderPassword)
 
@@ -39,7 +48,7 @@ async function createVerifiablePresentation(
     })
   )
 
-  const fileNamePresentation = holderName + '.json'
+  const fileNamePresentation = holderName + '-presentation.json'
   const presentationFilePath = path.join('presentations', fileNamePresentation)
   writeFileSync(presentationFilePath, JSON.stringify(signedVp, null, 4))
 

@@ -89,7 +89,9 @@ async function stronghold() {
   if (process.argv[2].toLowerCase() == 'get-did') {
     if (process.argv.length != 5) {
       console.error('Error: Command arguments are incorrect!')
-      console.log(`please use "npm run start get-did <identity-name> <stronghold-password>"`)
+      console.log(
+        `please use "npm run start get-did <identity-name> <stronghold-password>"`
+      )
       return
     }
     const name = process.argv[3]
@@ -101,7 +103,9 @@ async function stronghold() {
   if (process.argv[2].toLowerCase() == 'create-vp') {
     if (process.argv.length != 8) {
       console.error('Error: Command arguments are incorrect!')
-      console.log(`Plese use "npm run start create-vp <holder-name> <holder-password> <credential-file> <verification-method-fragment> <challenge>`);
+      console.log(
+        `Plese use "npm run start create-vp <holder-name> <holder-password> <credential-file> <verification-method-fragment> <challenge>`
+      )
       return
     }
     const holderName = process.argv[3]
@@ -122,7 +126,9 @@ async function stronghold() {
   if (process.argv[2].toLowerCase() == 'verify-vp') {
     if (process.argv.length != 5) {
       console.error('Error: Command arguments are incorrect!')
-      console.log(`Please use "npm run start verify-vp <presentation-file> <challenge>"`);
+      console.log(
+        `Please use "npm run start verify-vp <presentation-file> <challenge>"`
+      )
       return
     }
     const presentationFile = process.argv[3]
@@ -134,7 +140,9 @@ async function stronghold() {
   if (process.argv[2].toLowerCase() == 'revoke-vc') {
     if (process.argv.length != 7) {
       console.error('Error: Command arguments are incorrect!')
-      console.log(`Please run "npm run start revoke-vc <issuer-name> <issuer-password> <revocation-bitmap-fragment> <revocation-index>"`)
+      console.log(
+        `Please run "npm run start revoke-vc <issuer-name> <issuer-password> <revocation-bitmap-fragment> <revocation-index>"`
+      )
       return
     }
     const issuerName = process.argv[3]
@@ -148,7 +156,6 @@ async function stronghold() {
       parseInt(revocationIndex)
     )
   }
-
 }
 
 stronghold().then(() => {})

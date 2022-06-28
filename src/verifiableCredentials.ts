@@ -8,8 +8,18 @@ import { writeFileSync } from 'fs'
 import { loadDID } from './loadDid'
 import * as path from 'path'
 
-// Create an unsigned `UniversityDegree` credential for Alice.
-// The issuer also chooses a unique `RevocationBitmap` index to be able to revoke it later.
+/**
+ * Create a signed `UniversityDegree` credential and saves it to `credentials/<subjectName>-credential.json
+ * The issuer also chooses a unique revocation index to be able to revoke the credential later.
+ *
+ * @param issuerName used to locate the Stronghold file in `/stronghold-files/<issuerName>.hodl`.
+ * @param issuerPassword Stronghold password.
+ * @param subjectName Name of subject, output file will be `<subjectName>-credential.json`.
+ * @param subjectDid DID of subject e.g. `did:iota:abc...zxy`.
+ * @param verificationMethodFragment to determin which verification method the VC should be signed with.
+ * @param revocationBitmapFragment to determin which revocation list the VC is tied to.
+ * @param revocationIndex to determin the index of this credential in the revocation list.
+ */
 async function createSignedVerifiableCredential(
   issuerName: string,
   issuerPassword: string,
@@ -32,7 +42,7 @@ async function createSignedVerifiableCredential(
     GPA: '4.0',
   }
 
-  // Create an unsigned `UniversityDegree` credential for Alice.
+  // Create an unsigned `UniversityDegree` credential for the subject.
   // The issuer also chooses a unique `RevocationBitmap` index to be able to revoke it later.
   const unsignedVc = new Credential({
     id: 'https://example.edu/credentials/3732',

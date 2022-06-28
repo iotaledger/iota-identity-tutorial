@@ -9,7 +9,10 @@ import { loadDID } from './loadDid'
  * Add a RevocationBitmap service to a DID Document.
  * This allows verifiers to check whether a credential has been revoked.
  *
- **/
+ * @param name Name of Issuer to locate DID in `stronhold-files/<name>.hodl`
+ * @param password Stronghold password.
+ * @param fragment Fragment of revocation bitmap to be created.
+ */
 async function addRevocationBitmap(
   name: string,
   password: string,

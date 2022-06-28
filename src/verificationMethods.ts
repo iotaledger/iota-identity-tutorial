@@ -1,6 +1,12 @@
 import { Account, MethodContent, ExplorerUrl } from '@iota/identity-wasm/node'
 import { loadDID } from './loadDid'
-
+/**
+ * Adds a verification method to a DID Document and publishes it to the tangle.
+ *
+ * @param name Name of DID holder to locate Stronghold file in `/stronghold-files/<name>.hodl`.
+ * @param password Stronghold password.
+ * @param fragment Fragment of new verifcation method.
+ */
 async function addVerificationMethod(
   name: string,
   password: string,
