@@ -3,7 +3,7 @@ import { createSignedVerifiableCredential } from './verifiableCredentials'
 import { createVerifiablePresentation } from './verifiablePresentation'
 import { checkVerifiablePresentation } from './checkVerifiablePresentation'
 import { addVerificationMethod } from './verificationMethods'
-import { revokeVC } from './revokation'
+import { revokeVC } from './revocation'
 import { addRevocationBitmap } from './revocationBitmap'
 import { loadDID } from './loadDid'
 
@@ -14,9 +14,10 @@ async function stronghold() {
     return
   }
 
+  // Create DID.
   if (process.argv[2].toLowerCase() == 'create-did') {
     if (process.argv.length != 5) {
-      console.error('Please add identity name as command line argument')
+      console.error('Error: Command arguments are incorrect!')
       console.error(
         'Please use: "npm run start create-did <name> <stronghold-password>"'
       )
@@ -26,6 +27,7 @@ async function stronghold() {
     return
   }
 
+  // Create Verification Method.
   if (process.argv[2].toLowerCase() == 'create-vm') {
     if (process.argv.length != 6) {
       console.error('Error: Command arguments are incorrect!')
@@ -40,7 +42,8 @@ async function stronghold() {
     addVerificationMethod(name, password, fragment)
   }
 
-  if (process.argv[2].toLowerCase() == 'add-revocation-bitmap') {
+  // Add Revocation List.
+  if (process.argv[2].toLowerCase() == 'add-revocation-list') {
     if (process.argv.length != 6) {
       console.error('Error: Command arguments are incorrect!')
       console.error(
@@ -55,9 +58,13 @@ async function stronghold() {
     addRevocationBitmap(name, password, fragment)
   }
 
+  // Create verifiable Credential.
   if (process.argv[2].toLowerCase() == 'create-vc') {
     if (process.argv.length != 10) {
       console.error('Error: Command arguments are incorrect!')
+      console.error(
+        `please use "npm run start create-vc <issuer-name> <issuerPassword> <subjectName> <subjectDid> <verificationMethodFragment> <revocationBitmapFragment> <revocationIndex>`
+      )
       return
     }
     const issuerName = process.argv[3]
@@ -78,9 +85,11 @@ async function stronghold() {
     )
   }
 
+  // Get DID.
   if (process.argv[2].toLowerCase() == 'get-did') {
     if (process.argv.length != 5) {
       console.error('Error: Command arguments are incorrect!')
+      console.log(`please use "npm run start get-did <identity-name> <stronghold-password>"`)
       return
     }
     const name = process.argv[3]
@@ -88,36 +97,44 @@ async function stronghold() {
     loadDID(name, password, true)
   }
 
+  // Create Verifiable Presentation.
   if (process.argv[2].toLowerCase() == 'create-vp') {
-    if (process.argv.length != 7) {
+    if (process.argv.length != 8) {
       console.error('Error: Command arguments are incorrect!')
+      console.log(`Plese use "npm run start create-vp <holder-name> <holder-password> <credential-file> <verification-method-fragment> <challenge>`);
       return
     }
     const holderName = process.argv[3]
     const holderPassword = process.argv[4]
-    const fragment = process.argv[5]
-    const challenge = process.argv[6]
+    const credentialFile = process.argv[5]
+    const fragment = process.argv[6]
+    const challenge = process.argv[7]
     createVerifiablePresentation(
       holderName,
       holderPassword,
+      credentialFile,
       fragment,
       challenge
     )
   }
 
+  // Check Verifiable Presentation.
   if (process.argv[2].toLowerCase() == 'verify-vp') {
     if (process.argv.length != 5) {
       console.error('Error: Command arguments are incorrect!')
+      console.log(`Please use "npm run start verify-vp <presentation-file> <challenge>"`);
       return
     }
-    const holderName = process.argv[3]
+    const presentationFile = process.argv[3]
     const challenge = process.argv[4]
-    checkVerifiablePresentation(holderName, challenge)
+    checkVerifiablePresentation(presentationFile, challenge)
   }
 
+  // Revoke Verifiable Credential.
   if (process.argv[2].toLowerCase() == 'revoke-vc') {
     if (process.argv.length != 7) {
       console.error('Error: Command arguments are incorrect!')
+      console.log(`Please run "npm run start revoke-vc <issuer-name> <issuer-password> <revocation-bitmap-fragment> <revocation-index>"`)
       return
     }
     const issuerName = process.argv[3]
@@ -131,6 +148,7 @@ async function stronghold() {
       parseInt(revocationIndex)
     )
   }
+
 }
 
 stronghold().then(() => {})

@@ -53,7 +53,7 @@ async function createSignedVerifiableCredential(
     ProofOptions.default()
   )
 
-  const fileName = subjectName + '.json'
+  const fileName = subjectName + '-credential.json'
   const filePath = path.join('credentials', fileName)
   writeFileSync(filePath, JSON.stringify(signedVC, null, 4))
 

@@ -11,11 +11,11 @@ const { readFileSync, writeFileSync } = require('fs')
 async function createVerifiablePresentation(
   holderName: string,
   holderPassword: string,
+  credentialFile: string,
   verificationMethodFragment: string,
   challenge: string
 ) {
-  const fileName = holderName + '.json'
-  const filePath = path.join('credentials', fileName)
+  const filePath = path.join('credentials', credentialFile)
   const verifiableCredential = JSON.parse(readFileSync(filePath))
 
   const holder: Account = await loadDID(holderName, holderPassword)

@@ -10,10 +10,10 @@ import * as path from 'path'
 const { readFileSync } = require('fs')
 
 async function checkVerifiablePresentation(
-  holderName: string,
+  presentationFile: string,
   challenge: string
 ) {
-  const fileName = holderName + '.json'
+  const fileName = presentationFile + '.json'
   const filePath = path.join('presentations', fileName)
   const verifiablePresentation = JSON.parse(readFileSync(filePath))
 

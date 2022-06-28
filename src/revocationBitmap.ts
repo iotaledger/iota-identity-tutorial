@@ -5,8 +5,11 @@ import {
 } from '@iota/identity-wasm/node'
 import { loadDID } from './loadDid'
 
-// Add a RevocationBitmap service to a DID Document.
-// This allows verifiers to check whether a credential has been revoked.
+/**
+ * Add a RevocationBitmap service to a DID Document.
+ * This allows verifiers to check whether a credential has been revoked.
+ *
+ **/
 async function addRevocationBitmap(
   name: string,
   password: string,
