@@ -1,194 +1,223 @@
-## IOTA Identity Tutorial (WASM-Binding)
+---
+keywords:
+- wasm
+- decentralized identifiers
+- did subject
+- Verifiable credentials
+- Verifiable Presentations
+- validate
+- degree
+- university
+---
 
-### Problem Description
-In this tutorial you will utilize the [WASM binding of the IOTA Identity framework](https://github.com/iotaledger/identity.rs/tree/dev/bindings/wasm/examples) to solve the problem described below. To follow along please clone this repo and make sure to install the npm/yarn package *@iota/identity-wasm@dev* as described [here](https://github.com/iotaledger/identity.rs/blob/dev/bindings/wasm/README.md#install-the-library):
-> Alice recently graduated from the University of Oslo with a Bachelor of Computer Science. Now she wants to apply for a remote job at the IOTA Foundation and needs to digitally prove the existence and validity of her degree. What she needs is an immutable and verifiable credential, which has been approved by both the University of Oslo and herself, before presenting it to her possible new employer.
+# Digitally Validate a Degree
 
-### Roles
-As described [here](https://www.iota.org/solutions/digital-identity), IOTA Identity builds on the W3C's proposed standards for a digital identity framework and thus is based on three roles:
-- Holder (Alice)
-- Issuer (University of Oslo)
-- Verifier (IOTA Foundation)
+In this tutorial, you will use the WASM binding of the IOTA Identity framework to digitally prove the existence and validity of a university degree. To follow along please clone this repository.
 
-### Terms
+
+The `src/` directory contains scripts that can be run separately by providing command line arguments. Make sure that the npm dependencies - which include 
+the wasm bindings for the IOTA Identity Framework - are installed by running:
+
+```bash
+npm install
+```
+
+## Degree Validation
+Alice recently graduated from the University of Oslo with a Bachelor of Computer Science. Now, she wants to apply for a remote job at the IOTA Foundation and needs to digitally prove the existence and validity of her degree. What she needs is an immutable and verifiable credential, approved by both the University of Oslo and herself, before presenting it to her potential employer.
+
+
+## Roles
+
+As described in the [Digital Identities Solution](https://www.iota.org/solutions/digital-identity), IOTA Identity builds on the [W3C's proposed standards for a digital identity framework](https://www.w3.org/TR/did-core/) based on three roles:
+
+- **Holder**: Alice
+- **Issuer**: University of Oslo
+- **Verifier**: IOTA Foundation
+
+## Terms
+
 |Term   | Definition    |
 |:---   |:---           |
 | [Decentralized Identifier (DID)](https://www.w3.org/TR/did-core/#dfn-decentralized-identifiers) |A globally unique persistent identifier that does not require a centralized registration authority and is often generated and/or registered cryptographically.|
 | [DID Subject](https://www.w3.org/TR/did-core/#dfn-did-subjects)          |The entity identified by a DID and described by a DID document. Anything can be a DID subject: person, group, organization, physical thing, digital thing, logical thing, etc.  |
 | [DID Document](https://www.w3.org/TR/did-core/#dfn-did-documents)          |A set of data describing the DID subject, including mechanisms, such as cryptographic public keys, that the DID subject or a DID delegate can use to authenticate itself and prove its association with the DID  |
-| [Verification Method](https://www.w3.org/TR/did-core/#dfn-verification-method)   |A set of parameters that can be used together with a process to independently verify a proof. For example, a cryptographic public key can be used as a verification method with respect to a digital signature; in such usage, it verifies that the signer possessed the associated cryptographic private key. |
+| [Verification Method](https://www.w3.org/TR/did-core/#dfn-verification-method)   |A set of parameters that can be used together with a process to independently verify a proof. For example, a cryptographic public key can be used as a verification method for a digital signature; in such usage, it verifies that the signer possessed the associated cryptographic private key. |
 | [Verifiable Credential](https://www.w3.org/TR/did-core/#dfn-verifiable-credentials) | A standard data model and representation format for cryptographically-verifiable digital credentials. It is signed by the issuer, to prove control over the Verifiable Credential with a nonce or timestamp. |
 | Verifiable Presentation | A Verifiable Presentation is the format in which a (collection of) Verifiable Credential(s) gets shared. It is signed by the subject, to prove control over the Verifiable Credential with a nonce or timestamp. |
 | [DID Resolution](https://www.w3.org/TR/did-core/#dfn-did-resolution)  | The process that takes as its input a DID and a set of resolution options and returns a DID document in a conforming representation plus additional metadata.  |
-| [Merkle Key Collection](https://medium.com/asecuritysite-when-bob-met-alice/how-can-i-have-a-1-000-private-keys-but-just-one-public-key-well-thats-merkle-magic-6c323439417b)  | By using a Merkle Tree you can verify the ownership of multiple private keys (Must be a power of 2) with only one public key.  |
 
-### Flow-Chart
-![banner](./Identity_Tutorial_Chart.png)
+## Sequence-Chart
 
-### Key Storage
-- In this tutorial, the key pairs for every newly created or updated DID document will be stored in Weakhold
-    - Ok, ok, it's just a couple of JSON files in a folder, but it get's the job done
-    - The files are stored in the Folder *weakhold* (e.g. ./weakhold/Alice.json)
+![banner](/sequence-diagram.png)
 
-:warning: **Needless to say that this is no proper key storage solution and for professional IOTA implementations we strongly recommend using our key management framework [Stronghold](https://github.com/iotaledger/stronghold.rs).**
+## Storage
 
-Example Weakhold file:
-```json
-{
-    "subject": "Alice",
-    "did": "did:iota:Bakoe4HD4uwekMuyMkeo7mCsA2frXej68M4QyFvEpo2G",
-    "messageId": "7c25309fe97f2cf2d609cf83f31e8838795dd16d235c7a56566970309a0d6dbd",
-    "explorerUrl": "https://explorer.iota.org/mainnet/message/7c25309fe97f2cf2d609cf83f31e8838795dd16d235c7a56566970309a0d6dbd",
-    "authKey": {
-        "type": "ed25519",
-        "public": "ExwZKmF9y2N4mKnEaeUU7bFyCkZ5oVjjK3ojooJKNxUK",
-        "secret": "G83815cmpPadAzs52GmpwS614xpaAWWQxUexmRVNkg75"
-    },
-    "verifKey": {
-        "type": "ed25519",
-        "public": "F9aM5Q9gGXb6Dswe8eSdsz5eDQX2ErTnpGDjFj5LMVvx",
-        "secret": "12S3U2u8ofyju53tmGsG9PKQfkBM8rhzL9BUBhfGqpdm"
-    }
-}
-```
+In this tutorial, [Stronghold](https://github.com/iotaledger/stronghold.rs) will be used to securely store private keys. The Identity Framework already has [Stronghold bindings for Node.js](https://github.com/iotaledger/identity.rs/tree/dev/bindings/stronghold-nodejs). We will be using them in this tutorial.
+For simplicity, each stronghold file will be responsible for storing only one DID.
 
-### Steps
+## Steps
+
 In this process, you will complete the different steps from the perspective of one of the mentioned roles above:
 
-1. **Holder:** Create a DID (Decentralized Identifier) document for Alice. After this step you will find Alice's weakhold file in [./weakhold/Alice.json](./weakhold/Alice.json).
-    - [createDid.js](createDid.js)
-    ```javascript
-    createDid('Alice');
-    ```
+### 1. **Holder**: Create a DID
 
-2. **Issuer:** Create a DID document for the University of Oslo. After this step you will find University of Oslo's weakhold file in [./weakhold/UniversityofOslo.json](./weakhold/UniversityofOslo.json).
-    - [createDid.js](createDid.js)
-    ```javascript
-    createDid('University of Oslo');
-    ```
+The first thing you will need to do in this tutorial is to create a DID (Decentralized Identifier) Document for Alice.
+The script [createDid.ts](./src/createDid.ts) can be used to create DIDs using the command:
 
-3. **Issuer:** Add a verification method "degreeVerifications" to the University's DID document with the purpose to verify Alice's degree. Since it's expected, that the University will have to sign more than just Alice's degree, this verification method is generated with a set of Merkle keys. These signatures can all be proved by a single public key, while retaining the ability to revoke them separately. Note that the newly added verification method is of the *type* "MerkleKeyCollection".
-    - [addVerificationMethod.js](addVerificationMethod.js)
-    ```javascript
-    //Add verification method with collection of merkle keys to issuer DID
-    //This enables the issuer to sign and revoke multiple documents without having to remove the verification method for each revocation
-    let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
-    let issuerVerificationMethod = "degreeVerifications";
+```bash
+npm run start create-did <name> <stronghold-password>
+```
 
-    addVerificationMethod(
-        subjectName = issuer.subject,
-        did = issuer.did,
-        authKey = KeyPair.fromJSON(issuer.authKey),
-        verificationMethodName = issuerVerificationMethod,
-        merkleKeys = true);
-    ```
+For Alice, a DID can be created using:
 
-4. **Holder:** Add a verification method to Alice's DID document with the purpose to present her degree to a third party. Since Alice only needs one key pair to the verifiable presentation of her credential, this verification method is generated with a simple private/public key pair. Note that the newly added verification method is of the *type* "Ed25519VerificationKey".
-    - [addVerificationMethod.js](addVerificationMethod.js)
-    ```javascript
-    //Add verification method to holder DID
-    let holder = getWeakholdObject('./weakhold/Alice.json')
-    let holderVerificationMethod = "aliceDegreePresentation";
+```bash
+npm run start create-did alice alice-password
 
-    addVerificationMethod(
-        subjectName = holder.subject,
-        did = holder.did,
-        authKey = KeyPair.fromJSON(holder.authKey),
-        verificationMethodName = holderVerificationMethod,
-        merkleKeys = false);
-    ```
+```
 
-5. **Holder:** Setup a document representing Alice's degree, containing her DID.
-    - [createVerifiableCredential.js](createVerifiableCredential.js)
-    ```javascript
-    //This part is already hard coded in "createVerifiableCredential.js"
-    //Create credential indicating the degree earned by Alice
-    const credentialSubject = {
-        "id": holderDid,
-        "name": holderSubject,
-        "degreeName": "Bachelor of Computer Science",
-        "degreeType": "BachelorDegree",
-        "GPA": "4.0"
-    }
-    ```
+This will create a minimal DID document for alice, and publish it to the Tangle. A Stronghold file `alice.hodl` will be created under `/stronghold-files` which contains the Account's state and the private key of the main verification method of the DID.
+`alice-password` will be used as a password for the stronghold storage. Obviously this password must be more secure in production applications.
 
-6. **Issuer:** Sign degree document with the first key in the Merkle key collection of the University's verification method in order to get a verifiable credential. After this step you will find the verifiable credential of Alice's degree in [./signedCredentials/offlineVerifiableCredential.json](./signedCredentials/offlineVerifiableCredential.json).
-    - [createVerifiableCredential.js](createVerifiableCredential.js)
-    ```javascript
-    //Issue and sign verifiable credential from weakhold object
-    let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json')
-    let issuerVerificationMethod = "degreeVerifications";
-    let holder = getWeakholdObject('./weakhold/Alice.json')
+See [Creating a Decentralized Identity](https://wiki.iota.org/identity.rs/concepts/decentralized_identifiers/create) for more information about generating DIDs.
 
-    createVerifiableCredential(
-        issuer.subject,
-        issuer.did,
-        KeyCollection.fromJSON(issuer.verifKey),
-        issuerVerificationMethod,
-        holder.did,
-        holder.subject);
-    ```
+### 2. **Issuer**: Create a DID
 
-7. **Holder:** Alice verifies the credentials to make sure it was actually signed by a key associated to the University DID
-    - [checkVerifiableCredential.js](checkVerifiableCredential.js)
-    ```javascript
-    let signedVcPath = './signedCredentials/offlineVerifiableCredential.json';
-    checkVerifiableCredential(signedVcPath);
-    ```
+Once you have created Alice's DID, you should do the same for the University of Oslo.
 
-8. **Holder:** Alice signs verifiable credential with private key of Alices's verification method in order to get a verifiable presentation. After this step you will find the verifiable presentation of Alice's degree in [./signedCredentials/offlineVerifiablePresentation.json](./signedCredentials/offlineVerifiablePresentation.json).
-    - [createVerifiablePresentation.js](createVerifiablePresentation.js)
-    ```javascript
-    //Issue and sign verifiable credential from weakhold object
-    let holder = getWeakholdObject('./weakhold/Alice.json')
-    let holderVerificationMethod = "aliceDegreePresentation";
-    let signedVcPath = './signedCredentials/aliceVerifiableCredential.json';
+```bash
+npm run start create-did uni-of-oslo uni-password
+```
 
-    createVerifiablePresentation(
-        holder.subject,
-        holder.did,
-        KeyPair.fromJSON(holder.verifKey),
-        holderVerificationMethod,
-        signedVcPath);
-    ```
+with that `uni-of-oslo.hodl` will be created under `/stronhold-files`.
 
-9. **Verifier:** The IOTA Foundation verfies Alice's and the University's signatures with their respective public keys by checking the verifiable presentation.
-    - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
-    ```javascript
-    let signedVpPath = './signedCredentials/offlineVerifiablePresentation.json';
-    checkVerifiablePresentation(signedVpPath);
-    ```
+### 3. **Issuer**: Add a Verification Method
 
-10. **Issuer:** Unfortunately the University found out, that Alice was cheating on her final exam. Thus the University revokes the verification of Alice's credential. Since we have used a Merkle key collection for the University's verification method, this step can be done two ways. Either removing the whole verification method or only revoking the one Merkle key used for the signature. Below you can find both ways. Note that also Alice could revoke her signature on the verifiable presentation, by removing her verification method.
-    - [removeVerificationMethod.js](removeVerificationMethod.js)
-    ```javascript
-    //Remove whole verification method and thus also the used key pair for signatures
-    let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json');
-    let verificationMethodName  = "degreeVerifications";
+Since the university will need to issue a signed verifiable credential for Alice, a verification method should be added to the university's DID document.
+Read more about adding verification methods in [update DID Documents](https://wiki.iota.org/identity.rs/concepts/decentralized_identifiers/update).
 
-    removeVerificationMethod(
-        issuer.subject,
-        issuer.did,
-        KeyPair.fromJSON(issuer.authKey),
-        verificationMethodName );
-    ```
-    - [removeMerkleKey.js](removeMerkleKey.js)
-    ```javascript
-    //Revoke signatures, which used the first key in the Merkle key collection
-    let issuer = getWeakholdObject('./weakhold/UniversityofOslo.json');
-    let verificationMethodName  = "degreeVerifications";
+To add a Verification Method the following command can be used:
 
-    removeMerkleKey(
-        issuer.subject,
-        issuer.did,
-        KeyPair.fromJSON(issuer.authKey),
-        verificationMethodName,
-        KeyCollection.fromJSON(issuer.verifKey));
-    ```
+```bash
+npm run start create-vm <identity-name> <stronghold-password> <verification-fragment>
+```
 
-11. **Verifier:** The IOTA Foundation verifies Alice's and the University's signatures again by checking the verifiable presentation and finds out that the University revoked their signature.
-    - [checkVerifiablePresentation.js](checkVerifiablePresentation.js)
-    ```javascript
-    let signedVpPath = './signedCredentials/signedVP.json';
-    checkVerifiablePresentation(signedVpPath);
-    ```
+This command will invoke [verificationMethods.ts](./src/verificationMethods.ts).
+
+Note that `identity-name` is used to identify the Stronghold file location in `/stronghold-files` while `verification-fragment` is used to identify the Verification Method inside the DID Document.
+To create a Verification Method for the issuer, use the following command:
+
+```bash
+npm run start create-vm uni-of-oslo uni-password key-1
+```
+
+### 4. **Holder**: Add a Verification Method
+
+Alice will need a verification method to sign verifiable presentations before sending them to third parties. Hence a verification method also needs to be added to her DID document.
+
+Similar to the issuer, the following command can be run to add a verification method to Alice's DID Document.
+
+```bash
+npm run start create-vm alice alice-password key-1
+```
+
+### 5: **Issuer**: Create Revocation list
+
+In order for the issuer to be able to revoke credentials in the future, a revocation list is needed. See [Verifiable Credential Revocation](https://wiki.iota.org/identity.rs/concepts/verifiable_credentials/revocation) for further details.
+The following command can be used to create a revocation list:
+
+```bash
+npm run start add-revocation-list <identity-name> <stronghold-password> <revocation-fragment>
+```
+
+This will invoke [revocationBitmap.ts](./src/revocationBitmap.ts).
+
+For the University of Oslo use:
+
+```bash
+npm run start add-revocation-list uni-of-oslo uni-password rev-1
+```
+
+Notice that `rev-1` is used to identity this revocation list inside the DID document.
+
+### 5 **Issuer**: Create Verifiable Credential
+
+University of Oslo can now issue a verifiable credential to Alice. The following command can be used to create a verifiable credential:
+
+```bash
+npm run start create-vc <issuer-name> <issuerPassword> <subjectName> <subjectDid> <verificationMethodFragment> <revocationBitmapFragment> <revocationIndex>
+```
+
+This will invoke [verifiableCredentials.ts](./src/verifiableCredentials.ts).
+
+To create a verifiable credential for Alice, run the following command:
+
+```bash
+npm run start create-vc uni-of-oslo uni-password alice <subjectDid> key-1 rev-1 5
+```
+
+Notice that `<subjectDid>` needs to be replaced with Alice's DID. The reason we didn't use Alice's Stronghold file, is that the issuer doesn't have access to it in a real world scenario.
+If you didn't note Alice's DID upon creating the DID, use `npm run start get-did alice alice-password` to log the DID saved in Alice's Stronghold file.
+
+This verifiable credential is given a revocation index of `5`, this will be used later when the verifiable credential will be revoked. \
+The command will execute the script in [verifiableCredentials.ts](./src/verifiableCredentials.ts) which creates a verifiable credential using values provided as arguments
+and hard-coded values to describe the issued degree. This credential will be tied to `rev-1` revocation list and then signed with `key-1` verification method.\
+Once the script execution finishes, the file `alice-credential.json` will be created in the `credentials/` directory. The file contains the credential in JSON format
+and is usually sent back to Alice to store and enable her to prove her degree.
+
+### 6 **Holder**: Create Verifiable Presentation
+
+After Alice received the verifiable credential from the university, she applies for a job at the IOTA Foundation. The foundation requests a verifiable presentation
+to be signed by alice that includes the challenge 'xyz123'.
+The script [verifiablePresentation.ts](./src/verifiablePresentation.ts) can be run with the command:
+
+```bash
+npm run start create-vp <holder-name> <holder-password> <credential-file> <verification-method-fragment> <challenge>
+```
+
+For Alice's case:
+
+```bash
+npm run start create-vp alice alice-password alice-credential.json key-1 xyz123
+```
+
+This will create a verifiable presentation of Alice's credential that includes the challenge and signed by Alice's `key-1` verification method.
+The resulted presentation is saved in `presentations/alice-presentation.json`.
+
+### 7 **Verifier**: Verification
+
+Now alice sends the signed verifiable presentation to the IOTA Foundation. The foundation now has to verify if everything is correct and the credential is valid.
+
+The script [checkVerifiablePresentation](./src/verifiablePresentation.ts) can be run with the command:
+
+```bash
+npm run start verify-vp <presentation-file> <challenge>
+```
+
+So the foundation can run:
+
+```bash
+npm run start verify-vp alice-presentation.json xyz123
+
+```
+
+Since everything was signed correctly, the verification should succeed.
+
+### 8 **Issuer**: Revocation
+
+Unfortunately the university found out, that Alice had cheated on her final exam. Therefore, the university wants to revoke the validity of Alice's credential.
+Since the revocation list `rev-1` with revocation index `5` were used upon creating the verifiable credential, revocation is now possible by updating the revocation list.
+
+[revocation.ts](./src/revocation.ts) can be run with the command:
+
+```bash
+npm run start revoke-vc <issuer-name> <issuer-password> <revocation-bitmap-fragment> <revocation-index>
+```
+
+To revoke Alice's Credential you can run:
+
+```bash
+npm run start revoke-vc uni-of-oslo uni-password rev-1 5
+```
+
+This will update the revocation list inside the issuer's DID Document and publish it to the tangle. Now if the IOTA Foundation tries to verify the credential again
+e.g. by running `npm run start verify-vp alice-presentation.json xyz123`, This will throw an error since the verification now fails.

@@ -1,11 +1,3 @@
-# Files
-
-
 # Folders
 node_modules/
-signedCredentials/*
-weakhold/*
-
-# exception to the rule
-!signedCredentials/README.md
-!weakhold/README.md 
+.idea/
